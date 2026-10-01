@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Free AI Agents Setup Guide — Hermes · Claude Code · Codex</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root[data-theme="dark"] {
+    --bg: #0D1117;
+    --surface: #161B22;
+    --surface2: #1E2530;
+    --border: #2A3441;
+    --accent: #7C6AF7;
+    --accent-glow: rgba(124,106,247,0.25);
+    --accent2: #00D2FF;
+    --hermes: #FF6B6B;
+    --hermes-bg: rgba(255,107,107,0.08);
+    --claude: #D97757;
+    --claude-bg: rgba(217,119,87,0.08);
+    --codex: #10A37F;
+    --codex-bg: rgba(16,163,127,0.08);
+    --text: #E6EDF3;
+    --text-muted: #8B949E;
+    --text-dim: #6E7681;
+    --code-bg: #0A0E14;
+    --win-color: #00A8FF;
+    --mac-color: #A8FF78;
+    --warning: #F0A400;
+    --success: #3FB950;
+    --step-num-bg: rgba(124,106,247,0.15);
+    --copy-hover: #2A3441;
+    --badge-bg: rgba(0,210,255,0.12);
+  }
+  :root[data-theme="light"] {
+    --bg: #F0F2F5;
+    --surface: #FFFFFF;
+    --surface2: #F6F8FA;
+    --border: #D0D7DE;
+    --accent: #6E56CF;
+    --accent-glow: rgba(110,86,207,0.15);
+    --accent2: #0969DA;
+    --hermes: #D73737;
+    --hermes-bg: rgba(215,55,55,0.06);
+    --claude: #B85C38;
+    --claude-bg: rgba(184,92,56,0.06);
+    --codex: #0B7A5F;
+    --codex-bg: rgba(11,122,95,0.06);
+    --text: #1A1F2E;
+    --text-muted: #57606A;
+    --text-dim: #8C959F;
+    --code-bg: #F6F8FA;
+    --win-color: #0969DA;
+    --mac-color: #1A7F37;
+    --warning: #9A6700;
+    --success: #1A7F37;
+    --step-num-bg: rgba(110,86,207,0.1);
+    --copy-hover: #E8EBEF;
+    --badge-bg: rgba(9,105,218,0.1);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    transition: background .2s, color .2s;
+    padding-bottom: 60px;
+  }
+
+  header {
+    position: sticky; top:0; z-index:100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex; align-items:center; justify-content:space-between;
+    height: 60px;
+    backdrop-filter: blur(12px);
+  }
+  .logo { display:flex; align-items:center; gap:10px; }
+  .logo-icon {
+    width:32px; height:32px; border-radius:8px;
+    background: linear-gradient(135deg, #7C6AF7, #00D2FF);
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:800; color:#fff;
+    box-shadow: 0 0 16px var(--accent-glow);
+  }
+  .logo-text { font-weight:700; font-size:15px; }
+  .logo-text span { color: var(--accent); }
+  .header-right { display:flex; align-items:center; gap:12px; }
+  .theme-btn {
+    background: var(--surface2); border:1px solid var(--border);
+    color: var(--text-muted); cursor:pointer; border-radius:8px;
+    padding:6px 12px; font-size:13px; font-family:inherit;
+    display:flex; align-items:center; gap:6px; transition: all .15s;
+  }
+  .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero { text-align:center; padding: 48px 24px 28px; max-width: 780px; margin:0 auto; }
+  .hero-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background: var(--badge-bg); border:1px solid var(--border);
+    color: var(--accent2); font-size:12px; font-weight:600;
+    padding:5px 14px; border-radius:20px; margin-bottom:20px;
+  }
+  .hero h1 { font-size:clamp(24px,4.4vw,38px); font-weight:800; line-height:1.15; letter-spacing:-0.8px; margin-bottom:14px; }
+  .hero h1 .h { color: var(--hermes); }
+  .hero h1 .c { color: var(--claude); }
+  .hero h1 .x { color: var(--codex); }
+  .hero p { color:var(--text-muted); font-size:15px; line-height:1.65; max-width:600px; margin:0 auto; }
+  .hero .sub { margin-top:12px; font-size:13.5px; color:var(--text-dim); }
+
+  .flow {
+    display:flex; align-items:center; justify-content:center;
+    margin: 26px auto 8px; flex-wrap:wrap; max-width:760px;
+  }
+  .flow-node {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:8px; padding:7px 14px; font-size:12px; font-weight:600; white-space:nowrap;
+  }
+  .flow-node.ac { border-color: var(--accent); color: var(--accent); background:rgba(124,106,247,0.1); }
+  .flow-node.he { border-color: var(--hermes); color: var(--hermes); background:var(--hermes-bg); }
+  .flow-node.cl { border-color: var(--claude); color: var(--claude); background:var(--claude-bg); }
+  .flow-node.cx { border-color: var(--codex); color: var(--codex); background:var(--codex-bg); }
+  .flow-arrow { color: var(--text-dim); font-size:16px; padding: 0 6px; }
+
+  .wrap { max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+  .part-head {
+    display:flex; align-items:center; gap:14px;
+    margin: 44px 0 18px; padding-bottom:14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .part-num {
+    width:38px; height:38px; border-radius:10px; flex-shrink:0;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    color:#fff; font-weight:800; font-size:15px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .part-title { font-weight:700; font-size:19px; letter-spacing:-.3px; }
+  .part-sub { font-size:12.5px; color:var(--text-muted); margin-top:2px; }
+
+  .tool-selector { display:flex; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .tool-btn {
+    display:flex; align-items:center; gap:12px;
+    padding:15px 22px; border-radius:12px; cursor:pointer;
+    border:2px solid var(--border); background: var(--surface);
+    font-size:14px; font-weight:600; font-family:inherit;
+    color: var(--text-muted); transition: all .2s; flex:1; min-width:230px;
+  }
+  .tool-icon { font-size:24px; }
+  .tool-name { font-size:15px; color: var(--text); display:block; }
+  .tool-sub { font-size:11px; color: var(--text-dim); margin-top:2px; display:block; font-weight:500; }
+  .tool-btn.active-hermes { border-color:var(--hermes); background:var(--hermes-bg); box-shadow:0 0 0 1px var(--hermes), 0 0 20px var(--hermes-bg); }
+  .tool-btn.active-claude { border-color:var(--claude); background:var(--claude-bg); box-shadow:0 0 0 1px var(--claude), 0 0 20px var(--claude-bg); }
+  .tool-btn.active-codex  { border-color:var(--codex);  background:var(--codex-bg);  box-shadow:0 0 0 1px var(--codex),  0 0 20px var(--codex-bg); }
+
+  .os-tabs { display:flex; gap:8px; margin-bottom:22px; border-bottom:2px solid var(--border); }
+  .os-tab {
+    padding:10px 24px; border-radius:8px 8px 0 0;
+    cursor:pointer; font-size:14px; font-weight:600;
+    border:none; background:transparent; color:var(--text-muted);
+    display:flex; align-items:center; gap:8px;
+    border-bottom:2px solid transparent; margin-bottom:-2px;
+    transition:all .15s; font-family:inherit;
+  }
+  .os-tab:hover { color:var(--text); }
+  .os-tab.active.win { color:var(--win-color); border-bottom-color:var(--win-color); background:rgba(0,168,255,.06); }
+  .os-tab.active.mac { color:var(--mac-color); border-bottom-color:var(--mac-color); background:rgba(168,255,120,.06); }
+
+  .panel { display:none; }
+  .panel.active { display:block; }
+
+  .steps { display:flex; flex-direction:column; gap:18px; }
+
+  .step-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; overflow:hidden; transition: border-color .15s;
+  }
+  .step-card:hover { border-color: var(--accent); }
+  .step-card.hermes-card:hover { border-color: var(--hermes); }
+  .step-card.claude-card:hover { border-color: var(--claude); }
+  .step-card.codex-card:hover  { border-color: var(--codex); }
+
+  .step-header { display:flex; align-items:flex-start; gap:14px; padding:18px 20px 14px; }
+  .step-num {
+    width:32px; height:32px; border-radius:8px; flex-shrink:0;
+    background:var(--step-num-bg); border:1px solid var(--accent);
+    color:var(--accent); font-weight:700; font-size:13px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace;
+  }
+  .step-num.h { background:var(--hermes-bg); border-color:var(--hermes); color:var(--hermes); }
+  .step-num.c { background:var(--claude-bg); border-color:var(--claude); color:var(--claude); }
+  .step-num.x { background:var(--codex-bg);  border-color:var(--codex);  color:var(--codex); }
+  .step-title { font-weight:600; font-size:15px; line-height:1.35; }
+  .step-subtitle { font-size:12px; color:var(--text-muted); margin-top:3px; }
+
+  .step-body { padding: 0 20px 18px 66px; }
+  .step-body > p.step-desc:first-child { margin-top:0; }
+  .step-desc { font-size:13.5px; color:var(--text-muted); line-height:1.68; margin-bottom:12px; }
+  .step-desc strong { color:var(--text); }
+  .step-desc a { color:var(--accent2); }
+
+  code.inline {
+    background:var(--surface2); padding:2px 6px; border-radius:4px;
+    font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--accent2);
+  }
+
+  .code-block { background:var(--code-bg); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-bottom:12px; }
+  .code-topbar {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:8px 14px; border-bottom:1px solid var(--border); background:var(--surface2);
+  }
+  .code-lang { font-size:11px; font-weight:600; color:var(--text-dim); text-transform:uppercase; letter-spacing:.5px; font-family:'JetBrains Mono',monospace; }
+  .copy-btn {
+    background:transparent; border:1px solid var(--border);
+    color:var(--text-muted); cursor:pointer; font-size:11px; font-weight:500;
+    font-family:'Inter',sans-serif; padding:3px 10px; border-radius:6px;
+    display:flex; align-items:center; gap:5px; transition:all .15s;
+  }
+  .copy-btn:hover { background:var(--copy-hover); color:var(--text); border-color:var(--accent); }
+  .copy-btn.copied { color:var(--success); border-color:var(--success); }
+
+  pre { padding:14px 16px; overflow-x:auto; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.72; color:var(--text); }
+  pre .cmd { color:#79C0FF; }
+  pre .flag { color:#A5D6FF; }
+  pre .val { color:#A8FF78; }
+  pre .comment { color:var(--text-dim); font-style:italic; }
+  pre .k { color:#FFB86C; }
+  pre .prompt { color:var(--text-dim); user-select:none; }
+  pre .str { color:#F78166; }
+  pre .warn { color:#FF7B72; font-weight:700; }
+  pre .ok { color:#7EE787; font-weight:700; }
+
+  .box {
+    border-radius:8px; padding:12px 16px; font-size:13px; line-height:1.62;
+    display:flex; gap:10px; margin-bottom:12px; border:1px solid;
+  }
+  .box:last-child { margin-bottom:0; }
+  .box-icon { font-size:15px; flex-shrink:0; margin-top:1px; }
+  .box.warn { background:rgba(240,164,0,.08); border-color:rgba(240,164,0,.3); color:var(--warning); }
+  .box.tip { background:rgba(63,185,80,.08); border-color:rgba(63,185,80,.3); color:var(--success); }
+  .box.info { background:var(--badge-bg); border-color:var(--border); color:var(--text-muted); }
+  .box.critical { background:var(--hermes-bg); border-color:rgba(255,107,107,.35); color:var(--hermes); }
+  .box strong { color:inherit; }
+  .box code.inline { background:rgba(0,0,0,.25); color:inherit; }
+
+  table { width:100%; border-collapse:collapse; font-size:12.5px; margin:10px 0 12px; }
+  th {
+    text-align:left; padding:9px 13px; background:var(--surface2);
+    color:var(--text-dim); font-weight:600; border-bottom:1px solid var(--border);
+    font-size:11px; text-transform:uppercase; letter-spacing:.4px;
+  }
+  td { padding:9px 13px; border-bottom:1px solid var(--border); color:var(--text-muted); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  td.mono { font-family:'JetBrains Mono',monospace; color:var(--k, #FFB86C); font-size:12px; white-space:nowrap; }
+
+  .field-table td:first-child { color:var(--text-muted); font-weight:500; width:170px; }
+  .field-table td:last-child { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--success); }
+  .field-table .field-note { font-family:'Inter',sans-serif; color:var(--text-dim); font-size:11px; display:block; margin-top:3px; white-space:normal; }
+
+  .provider-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin:10px 0 4px; }
+  .provider-chip {
+    background:var(--surface2); border:1px solid var(--border);
+    border-radius:8px; padding:11px 14px; font-size:12.5px; font-weight:500;
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .provider-chip .p-name { color:var(--text); }
+  .provider-chip .p-method { font-size:11px; color:var(--accent2); font-family:'JetBrains Mono',monospace; }
+  .provider-chip.required { border-color:rgba(63,185,80,.45); background:rgba(63,185,80,.04); }
+  .provider-chip .p-badge { font-size:10px; background:rgba(63,185,80,.14); color:var(--success); padding:2px 7px; border-radius:10px; display:inline-block; margin-top:3px; align-self:flex-start; font-weight:600; }
+  .provider-chip .p-badge.opt { background:rgba(0,210,255,.1); color:var(--accent2); }
+
+  .success-banner {
+    background: linear-gradient(135deg, rgba(124,106,247,.12), rgba(0,210,255,.08));
+    border:1px solid rgba(124,106,247,.3); border-radius:12px;
+    padding:26px; text-align:center; margin-top:10px;
+  }
+  .success-banner.he { background:linear-gradient(135deg, rgba(255,107,107,.1), rgba(255,165,0,.06)); border-color:rgba(255,107,107,.3); }
+  .success-banner.cl { background:linear-gradient(135deg, rgba(217,119,87,.1), rgba(255,180,120,.06)); border-color:rgba(217,119,87,.3); }
+  .success-banner.cx { background:linear-gradient(135deg, rgba(16,163,127,.1), rgba(0,210,255,.06)); border-color:rgba(16,163,127,.3); }
+  .success-banner .emoji { font-size:34px; margin-bottom:10px; }
+  .success-banner h3 { font-size:17px; margin-bottom:8px; }
+  .success-banner p { font-size:13px; color:var(--text-muted); line-height:1.65; }
+
+  .cta-card {
+    background: linear-gradient(135deg, rgba(255,107,107,.12), rgba(124,106,247,.1));
+    border:1px solid rgba(255,107,107,.32);
+    border-radius:16px; padding:32px 28px; text-align:center; margin:26px 0 10px;
+  }
+  .cta-card h3 { font-size:20px; margin-bottom:10px; letter-spacing:-.4px; }
+  .cta-card p { font-size:13.5px; color:var(--text-muted); line-height:1.7; max-width:520px; margin:0 auto 18px; }
+  .cta-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    background: var(--hermes); color:#fff; font-weight:700; font-size:14px;
+    padding:13px 30px; border-radius:10px; text-decoration:none;
+    box-shadow:0 6px 24px rgba(255,107,107,.28); transition: transform .15s, box-shadow .15s;
+  }
+  .cta-btn:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,107,107,.4); }
+  .cta-note { font-size:12px; color:var(--text-dim); margin-top:14px; }
+
+  .tier-flow {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:10px; padding:20px 22px; margin:12px 0;
+    font-size:12.5px; line-height:2; color:var(--text-muted);
+    font-family:'JetBrains Mono',monospace; overflow-x:auto;
+  }
+  .tier-flow .t1 { color:#79C0FF; }
+  .tier-flow .t2 { color:#FFB86C; }
+  .tier-flow .t3 { color:#A8FF78; }
+  .tier-flow .t4 { color:#7EE787; }
+  .tier-flow .lbl { color:var(--text-dim); }
+
+  .fix-grid { display:grid; grid-template-columns:1fr; gap:0; }
+  .fix {
+    display:grid; grid-template-columns:1fr; gap:6px;
+    padding:16px 18px; border:1px solid var(--border);
+    border-radius:10px; background:var(--surface); margin-bottom:10px;
+  }
+  .fix-sym { font-family:'JetBrains Mono',monospace; font-size:12.5px; color:#FF7B72; }
+  .fix-cause { font-size:13px; color:var(--text-muted); line-height:1.6; }
+  .fix-cause strong { color:var(--text); }
+  .fix-go { font-size:12.5px; color:var(--success); }
+
+  footer {
+    text-align:center; padding:34px 20px 10px;
+    color:var(--text-dim); font-size:12px;
+    border-top:1px solid var(--border); margin-top:46px;
+  }
+  footer a { color:var(--accent); text-decoration:none; }
+  footer a:hover { text-decoration:underline; }
+
+  @media(max-width:700px) {
+    .step-body { padding-left:20px; }
+    pre { font-size:11.5px; }
+    .tool-btn { min-width:100%; }
+    .field-table td:first-child { width:auto; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">FS</div>
+    <div class="logo-text">Free AI Agents <span>Setup Guide</span></div>
+  </div>
+  <div class="header-right">
+    <button class="theme-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">📖 Beginner-Friendly · Step by Step</div>
+  <h1>Run <span class="h">Hermes</span>, <span class="c">Claude Code</span> &amp; <span class="x">Codex</span><br/>on free AI — completely local</h1>
+  <p>One free local server. Hundreds of AI providers. Automatic fallback the moment one runs out. Zero subscription, zero API bill to start.</p>
+  <p class="sub">Pick your agent below. Every step is copy-paste — nothing to memorise.</p>
+
+  <div class="flow">
+    <div class="flow-node he">Hermes</div>
+    <div class="flow-node cl">Claude Code</div>
+    <div class="flow-node cx">Codex</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node ac">OmniRoute :20128</div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-node">free providers</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ═══════════ PART 1 ═══════════ -->
+  <div class="part-head">
+    <div class="part-num">1</div>
+    <div>
+      <div class="part-title">Install Node.js</div>
+      <div class="part-sub">The one prerequisite — everything else builds on it</div>
+    </div>
+  </div>
+
+  <div class="os-tabs" id="tabs-node">
+    <button class="os-tab active win" onclick="switchPart('node','win')"><span>🪟</span> Windows</button>
+    <button class="os-tab mac" onclick="switchPart('node','mac')"><span>🍎</span> macOS</button>
+  </div>
+
+  <div class="panel active" id="node-panel-win">
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Download and install Node.js</div>
+            <div class="step-subtitle">Version 22.22.2+ or 24.x required</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <p class="step-desc">Download the <strong>LTS</strong> installer from the official site:</p>
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Browser URL</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre>https://nodejs.org</pre>
+          </div>
+          <p class="step-desc">Run the <code class="inline">.msi</code>, accept every default, then <strong>close and reopen PowerShell</strong> — otherwise the new PATH won't load.</p>
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">PowerShell — verify</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="prompt">PS &gt; </span><span class="cmd">node</span> <span class="flag">--version</span>
+<span class="comment"># want v22.22.2 or v24.x — anything older will fail to install OmniRoute</span></pre>
+          </div>
+          <div class="box tip"><span class="box-icon">✅</span><span>If a number prints, you're done with Part 1. Move to Part 2.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="node-panel-mac">
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">01</div>
+          <div>
+            <div class="step-title">Install Node.js</div>
+            <div class="step-subtitle">Version 22.22.2+ or 24.x required</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <p class="step-desc">The easy way — install <strong>nvm</strong> first, then Node through it. This keeps you on the latest version automatically.</p>
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Terminal — install nvm</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="comment"># 1. Install nvm</span>
+<span class="prompt">$ </span><span class="cmd">curl</span> <span class="flag">-o-</span> https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh <span class="flag">|</span> <span class="cmd">bash</span>
+
+<span class="comment"># 2. Close the terminal completely, reopen it, then:</span>
+<span class="prompt">$ </span><span class="cmd">nvm</span> <span class="flag">install</span> <span class="val">24</span>
+<span class="prompt">$ </span><span class="cmd">nvm</span> <span class="flag">use</span> <span class="val">24</span></pre>
+          </div>
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Terminal — verify</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="prompt">$ </span><span class="cmd">node</span> <span class="flag">--version</span>
+<span class="comment"># want v24.x</span></pre>
+          </div>
+          <div class="box info"><span class="box-icon">ℹ️</span><span>No nvm? Download the <strong>.pkg</strong> installer from <strong>nodejs.org</strong> instead and drag it to Applications.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PART 2 ═══════════ -->
+  <div class="part-head">
+    <div class="part-num">2</div>
+    <div>
+      <div class="part-title">Install &amp; start OmniRoute</div>
+      <div class="part-sub">The free AI gateway that sits between your agent and the providers</div>
+    </div>
+  </div>
+
+  <div class="os-tabs" id="tabs-omni">
+    <button class="os-tab active win" onclick="switchPart('omni','win')"><span>🪟</span> Windows</button>
+    <button class="os-tab mac" onclick="switchPart('omni','mac')"><span>🍎</span> macOS</button>
+  </div>
+
+  <div class="panel active" id="omni-panel-win">
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Install OmniRoute globally</div>
+            <div class="step-subtitle">One command, runs on your own machine</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">PowerShell — Window 1</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="prompt">PS &gt; </span><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">omniroute</span></pre>
+          </div>
+          <div class="box info"><span class="box-icon">ℹ️</span><span>Seeing <code class="inline">npm warn ERESOLVE</code> or peer-dependency warnings? <strong>They are harmless</strong> — the install still succeeds.</span></div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Start the server</div>
+            <div class="step-subtitle">This window must stay open the whole time</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">PowerShell — Window 1 (keep open!)</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="prompt">PS &gt; </span><span class="cmd">omniroute</span></pre>
+          </div>
+          <div class="box warn"><span class="box-icon">⚠️</span><span><strong>Do not close this window.</strong> OmniRoute must keep running or nothing will work. Open a <strong>second PowerShell window</strong> for every remaining step.</span></div>
+          <p class="step-desc">Now open your browser and go to:</p>
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Browser URL</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre>http://localhost:20128</pre>
+          </div>
+          <div class="box tip"><span class="box-icon">✅</span><span>You should see the dashboard. Leave this tab open — you need it in Part 3.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="omni-panel-mac">
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">02</div>
+          <div>
+            <div class="step-title">Install OmniRoute globally</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Terminal — Tab 1</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="prompt">$ </span><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">omniroute</span></pre>
+          </div>
+          <div class="box info"><span class="box-icon">ℹ️</span><span><code class="inline">npm warn ERESOLVE</code> warnings are harmless — the install still succeeds.</span></div>
+        </div>
+      </div>
+
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">03</div>
+          <div>
+            <div class="step-title">Start the server</div>
+            <div class="step-subtitle">This tab must stay open the whole time</div>
+          </div>
+        </div>
+        <div class="step-body">
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Terminal — Tab 1 (keep open!)</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre><span class="prompt">$ </span><span class="cmd">omniroute</span></pre>
+          </div>
+          <div class="box warn"><span class="box-icon">⚠️</span><span><strong>Do not close this tab.</strong> Open a <strong>new tab</strong> (⌘T) for all remaining steps.</span></div>
+          <div class="code-block">
+            <div class="code-topbar"><span class="code-lang">Browser URL</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+            <pre>http://localhost:20128</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PART 3 ═══════════ -->
+  <div class="part-head">
+    <div class="part-num">3</div>
+    <div>
+      <div class="part-title">Connect a free provider</div>
+      <div class="part-sub">No credit card, no paid subscription, no API key purchase</div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">04</div>
+      <div>
+        <div class="step-title">Turn on a free backend in the dashboard</div>
+        <div class="step-subtitle">Dashboard → Providers → pick one → Connect</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">A fresh OmniRoute install already works with <strong>zero credentials</strong> — the keyless provider is wired into the <code class="inline">auto</code> route out of the box. But connecting a real account gets you better models. Start with whichever of these you want:</p>
+
+      <div class="provider-grid">
+        <div class="provider-chip required">
+          <span class="p-name">🦙 OpenCode Free</span>
+          <span class="p-method">No signup at all</span>
+          <span class="p-badge">✅ Start here</span>
+        </div>
+        <div class="provider-chip required">
+          <span class="p-name">🪁 Kiro AI</span>
+          <span class="p-method">OAuth login</span>
+          <span class="p-badge">✅ ~50 credits/mo</span>
+        </div>
+        <div class="provider-chip">
+          <span class="p-name">🧠 Pollinations</span>
+          <span class="p-method">No key needed</span>
+          <span class="p-badge opt">Optional</span>
+        </div>
+        <div class="provider-chip">
+          <span class="p-name">🟩 NVIDIA NIM</span>
+          <span class="p-method">API key</span>
+          <span class="p-badge opt">Optional</span>
+        </div>
+        <div class="provider-chip">
+          <span class="p-name">⚡ Cerebras</span>
+          <span class="p-method">API key</span>
+          <span class="p-badge opt">1M tokens/day</span>
+        </div>
+        <div class="provider-chip">
+          <span class="p-name">🌐 OpenRouter</span>
+          <span class="p-method">API key</span>
+          <span class="p-badge opt">:free models</span>
+        </div>
+      </div>
+
+      <div class="box tip" style="margin-top:14px;"><span class="box-icon">💡</span><span><strong>More free providers you can switch on:</strong> OpenCode Zen, Kilo Code, Requesty, SiliconFlow, Z.AI GLM, Baidu ERNIE, Qoder AI, Cloudflare AI. All $0 — add as many as you like, OmniRoute rotates between them.</span></div>
+
+      <div class="box info"><span class="box-icon">🔁</span><span><strong>Why more providers is better:</strong> OmniRoute auto-falls back the instant one hits a rate limit or runs dry. One provider = fragile. Three or four = never blocked.</span></div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <div class="step-num">05</div>
+      <div>
+        <div class="step-title">Create your API key</div>
+        <div class="step-subtitle">The token your agent will authenticate with</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <p class="step-desc">In the dashboard go to <strong>Endpoints</strong> → <strong>Create API Key</strong> → name it whatever you like → copy it.</p>
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-lang">Dashboard URL</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+        <pre>http://localhost:20128/dashboard/api-manager</pre>
+      </div>
+      <p class="step-desc">Your key looks like this:</p>
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-lang">Example</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+        <pre><span class="val">sk-your-key-here-xxxxxxxx</span></pre>
+      </div>
+      <div class="box warn"><span class="box-icon">🔑</span><span><strong>Keep this key safe.</strong> It never leaves your machine — OmniRoute is fully local — but you'll paste it into your agent's config in Part 4. Don't paste it into any website, ever.</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PART 4 ═══════════ -->
+  <div class="part-head">
+    <div class="part-num">4</div>
+    <div>
+      <div class="part-title">Connect your agent</div>
+      <div class="part-sub">Pick the tool you actually use — the steps differ</div>
+    </div>
+  </div>
+
+  <div class="tool-selector">
+    <div class="tool-btn active-hermes" onclick="switchTool('hermes')">
+      <span class="tool-icon">🔴</span>
+      <span><span class="tool-name">Hermes Agent</span><span class="tool-sub">Desktop app by Nous Research</span></span>
+    </div>
+    <div class="tool-btn" onclick="switchTool('claude')">
+      <span class="tool-icon">🟠</span>
+      <span><span class="tool-name">Claude Code</span><span class="tool-sub">Anthropic's CLI</span></span>
+    </div>
+    <div class="tool-btn" onclick="switchTool('codex')">
+      <span class="tool-icon">🟢</span>
+      <span><span class="tool-name">Codex CLI</span><span class="tool-sub">OpenAI's CLI</span></span>
+    </div>
+  </div>
+
+  <!-- ──── HERMES ──── -->
+  <div class="tool-panel active" id="tool-panel-hermes">
+
+    <div class="os-tabs" id="tabs-hermes">
+      <button class="os-tab active win" onclick="switchPart('hermes','win')"><span>🪟</span> Windows</button>
+      <button class="os-tab mac" onclick="switchPart('hermes','mac')"><span>🍎</span> macOS</button>
+    </div>
+
+    <div class="panel active" id="hermes-panel-win">
+      <div class="steps">
+        <div class="step-card hermes-card">
+          <div class="step-header">
+            <div class="step-num h">01</div>
+            <div>
+              <div class="step-title">Download &amp; install Hermes Agent</div>
+              <div class="step-subtitle">Windows 10/11 x64</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Browser URL</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre>https://github.com/NousResearch/hermes-agent/releases/latest</pre>
+            </div>
+            <p class="step-desc">Download the <code class="inline">.exe</code> installer → run it → follow the wizard → launch Hermes from the Start menu.</p>
+            <div class="box critical"><span class="box-icon">🔑</span><span><strong>Context window requirement:</strong> Hermes rejects any model with less than <strong>64,000 tokens</strong> of context. This is non-negotiable and it's the #1 reason setups fail — the config in step 03 handles it.</span></div>
+          </div>
+        </div>
+
+        <div class="step-card hermes-card">
+          <div class="step-header">
+            <div class="step-num h">02</div>
+            <div>
+              <div class="step-title">Add OmniRoute as a custom endpoint</div>
+              <div class="step-subtitle">Settings → Providers → Custom Endpoints</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">Open Hermes → click the <strong>⚙ Settings</strong> gear (bottom-left) → <strong>Providers</strong> → <strong>Custom Endpoints</strong> → click <strong>"+ New Endpoint"</strong>. Fill in exactly these values:</p>
+            <table class="field-table">
+              <tr><th>Field</th><th>Value to Enter</th></tr>
+              <tr><td>Name</td><td>omni-route<span class="field-note">Any friendly label — this is just for you</span></td></tr>
+              <tr><td>Provider ID</td><td>omniroute<span class="field-note">Any unique id for this endpoint</span></td></tr>
+              <tr><td>Endpoint URL</td><td>http://localhost:20128/v1<span class="field-note">⚠️ Must include <code class="inline">/v1</code></span></td></tr>
+              <tr><td>Default Model</td><td>auto<span class="field-note">OmniRoute picks the best free model automatically</span></td></tr>
+              <tr><td>Context</td><td>131072<span class="field-note">🚨 MUST be 64000 or higher. 131072 (128K) is recommended</span></td></tr>
+              <tr><td>API Key</td><td>sk-your-key-here<span class="field-note">The key you copied in Part 3, step 05</span></td></tr>
+            </table>
+            <div class="box critical"><span class="box-icon">🚨</span><span><strong>Context must be 64000+.</strong> If you leave it at the default 16000, Hermes refuses to start and shows: <em>"Model has a context window below the minimum 64,000 required by Hermes Agent."</em> Set it to <strong>131072</strong>.</span></div>
+            <p class="step-desc">Click <strong>Save</strong>, then click <strong>"✦ Use"</strong> to activate the endpoint.</p>
+          </div>
+        </div>
+
+        <div class="step-card hermes-card">
+          <div class="step-header">
+            <div class="step-num h">03</div>
+            <div>
+              <div class="step-title">Test &amp; start a session</div>
+              <div class="step-subtitle">Verify it works, then just talk to it</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">Still in Settings → Custom Endpoints, click <strong>"✦ Test"</strong> on your omni-route endpoint. Look for a green checkmark.</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — health check</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">curl</span> http://localhost:20128/health
+<span class="comment"># expect: {"status":"ok"}</span></pre>
+            </div>
+            <p class="step-desc">Then in Hermes click <strong>"+ New session"</strong> and send any message.</p>
+            <div class="success-banner he">
+              <div class="emoji">🎉</div>
+              <h3>Hermes Agent → OmniRoute → free providers</h3>
+              <p>Hermes is now routing through your local gateway with automatic fallback across every free provider you've connected. Context set to 128K — no more init errors.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="hermes-panel-mac">
+      <div class="steps">
+        <div class="step-card hermes-card">
+          <div class="step-header">
+            <div class="step-num h">01</div>
+            <div>
+              <div class="step-title">Download &amp; install Hermes Agent</div>
+              <div class="step-subtitle">macOS 12+ (Apple Silicon or Intel)</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Browser URL</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre>https://github.com/NousResearch/hermes-agent/releases/latest</pre>
+            </div>
+            <p class="step-desc">Download the <code class="inline">.dmg</code> → open it → drag Hermes into Applications → launch with ⌘Space → "Hermes".</p>
+            <div class="box info"><span class="box-icon">ℹ️</span><span>macOS may warn "unidentified developer" on first launch. Go to <strong>System Settings → Privacy &amp; Security</strong> → click <strong>Open Anyway</strong>.</span></div>
+            <div class="box critical"><span class="box-icon">🔑</span><span><strong>Context window requirement:</strong> Hermes rejects any model below <strong>64,000 tokens</strong>. Handled in step 02.</span></div>
+          </div>
+        </div>
+
+        <div class="step-card hermes-card">
+          <div class="step-header">
+            <div class="step-num h">02</div>
+            <div>
+              <div class="step-title">Add OmniRoute as a custom endpoint</div>
+              <div class="step-subtitle">Settings → Providers → Custom Endpoints</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <table class="field-table">
+              <tr><th>Field</th><th>Value to Enter</th></tr>
+              <tr><td>Name</td><td>omni-route</td></tr>
+              <tr><td>Provider ID</td><td>omniroute</td></tr>
+              <tr><td>Endpoint URL</td><td>http://localhost:20128/v1<span class="field-note">⚠️ Must include <code class="inline">/v1</code></span></td></tr>
+              <tr><td>Default Model</td><td>auto</td></tr>
+              <tr><td>Context</td><td>131072<span class="field-note">🚨 MUST be 64000+</span></td></tr>
+              <tr><td>API Key</td><td>sk-your-key-here</td></tr>
+            </table>
+            <div class="box critical"><span class="box-icon">🚨</span><span>Context below 64000 → Hermes refuses to start with <em>"context window below the minimum 64,000"</em>. Use <strong>131072</strong>.</span></div>
+            <p class="step-desc">Click <strong>Save</strong> then <strong>"✦ Use"</strong>.</p>
+          </div>
+        </div>
+
+        <div class="step-card hermes-card">
+          <div class="step-header">
+            <div class="step-num h">03</div>
+            <div>
+              <div class="step-title">Test &amp; start a session</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal — health check</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">curl</span> http://localhost:20128/health
+<span class="comment"># expect: {"status":"ok"}</span></pre>
+            </div>
+            <p class="step-desc">Click <strong>"+ New session"</strong> in Hermes and send a message.</p>
+            <div class="success-banner he">
+              <div class="emoji">🎉</div>
+              <h3>Hermes Agent → OmniRoute → free providers</h3>
+              <p>Running on free models with automatic fallback. Context set to 128K — fully operational.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── CLAUDE CODE ──── -->
+  <div class="tool-panel" id="tool-panel-claude">
+
+    <div class="os-tabs" id="tabs-claude">
+      <button class="os-tab active win" onclick="switchPart('claude','win')"><span>🪟</span> Windows</button>
+      <button class="os-tab mac" onclick="switchPart('claude','mac')"><span>🍎</span> macOS</button>
+    </div>
+
+    <div class="panel active" id="claude-panel-win">
+      <div class="steps">
+        <div class="step-card claude-card">
+          <div class="step-header">
+            <div class="step-num c">01</div>
+            <div>
+              <div class="step-title">Install Claude Code</div>
+              <div class="step-subtitle">Anthropic's coding CLI</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — Window 2</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">@anthropic-ai/claude-code</span></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — verify</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">claude</span> <span class="flag">--version</span></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card claude-card">
+          <div class="step-header">
+            <div class="step-num c">02</div>
+            <div>
+              <div class="step-title">Point it at OmniRoute</div>
+              <div class="step-subtitle">This replaces your Anthropic login entirely</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">Run this in PowerShell — it writes the config file for you:</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">mkdir</span> <span class="flag">-Force</span> <span class="val">$env:USERPROFILE\.claude</span>
+<span class="prompt">PS &gt; </span><span class="cmd">notepad</span> <span class="val">$env:USERPROFILE\.claude\settings.json</span></pre>
+            </div>
+            <p class="step-desc">Paste this into the file and save:</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">~/.claude/settings.json</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre>{
+  <span class="k">"env"</span>: {
+    <span class="k">"ANTHROPIC_BASE_URL"</span>: <span class="str">"http://localhost:20128"</span>,
+    <span class="k">"ANTHROPIC_AUTH_TOKEN"</span>: <span class="str">"sk-your-key-here"</span>
+  }
+}</pre>
+            </div>
+            <div class="box critical"><span class="box-icon">🚨</span><span><strong>No <code class="inline">/v1</code> here.</strong> Claude Code uses the Anthropic gateway <strong>root</strong> — <code class="inline">http://localhost:20128</code>. Adding <code class="inline">/v1</code> breaks it. (This is the opposite of the Hermes and Codex settings — that's normal, the APIs differ.)</span></div>
+          </div>
+        </div>
+
+        <div class="step-card claude-card">
+          <div class="step-header">
+            <div class="step-num c">03</div>
+            <div>
+              <div class="step-title">Test it</div>
+              <div class="step-subtitle">One prompt, should answer instantly</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — test</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">claude</span> <span class="str">"say hello"</span></pre>
+            </div>
+            <p class="step-desc">No API key, no login, no Anthropic subscription needed. Claude Code is now running on whatever free model OmniRoute picks.</p>
+            <div class="success-banner cl">
+              <div class="emoji">🎉</div>
+              <h3>Claude Code → OmniRoute → free providers</h3>
+              <p>You're coding with Anthropic's CLI on free models, with automatic fallback when any provider hits its limit.</p>
+            </div>
+            <div class="box tip"><span class="box-icon">⚡</span><span><strong>Want a specific model?</strong> Try <code class="inline">claude -p "your task" --model glm/glm-5.2</code> — or let OmniRoute's <code class="inline">auto</code> routing decide.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="claude-panel-mac">
+      <div class="steps">
+        <div class="step-card claude-card">
+          <div class="step-header">
+            <div class="step-num c">01</div>
+            <div>
+              <div class="step-title">Install Claude Code</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal — Tab 2</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">@anthropic-ai/claude-code</span>
+<span class="prompt">$ </span><span class="cmd">claude</span> <span class="flag">--version</span></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card claude-card">
+          <div class="step-header">
+            <div class="step-num c">02</div>
+            <div>
+              <div class="step-title">Point it at OmniRoute</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">mkdir</span> <span class="flag">-p</span> <span class="val">~/.claude</span>
+<span class="prompt">$ </span><span class="cmd">nano</span> <span class="val">~/.claude/settings.json</span></pre>
+            </div>
+            <p class="step-desc">Paste this, save (Ctrl+O, Enter, Ctrl+X):</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">~/.claude/settings.json</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre>{
+  <span class="k">"env"</span>: {
+    <span class="k">"ANTHROPIC_BASE_URL"</span>: <span class="str">"http://localhost:20128"</span>,
+    <span class="k">"ANTHROPIC_AUTH_TOKEN"</span>: <span class="str">"sk-your-key-here"</span>
+  }
+}</pre>
+            </div>
+            <div class="box critical"><span class="box-icon">🚨</span><span><strong>No <code class="inline">/v1</code> here</strong> — Claude Code uses the gateway root. Adding it breaks the connection.</span></div>
+          </div>
+        </div>
+
+        <div class="step-card claude-card">
+          <div class="step-header">
+            <div class="step-num c">03</div>
+            <div>
+              <div class="step-title">Test it</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal — test</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">claude</span> <span class="str">"say hello"</span></pre>
+            </div>
+            <div class="success-banner cl">
+              <div class="emoji">🎉</div>
+              <h3>Claude Code → OmniRoute → free providers</h3>
+              <p>Coding with Anthropic's CLI on free models. No subscription required.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ──── CODEX ──── -->
+  <div class="tool-panel" id="tool-panel-codex">
+
+    <div class="os-tabs" id="tabs-codex">
+      <button class="os-tab active win" onclick="switchPart('codex','win')"><span>🪟</span> Windows</button>
+      <button class="os-tab mac" onclick="switchPart('codex','mac')"><span>🍎</span> macOS</button>
+    </div>
+
+    <div class="panel active" id="codex-panel-win">
+      <div class="steps">
+        <div class="step-card codex-card">
+          <div class="step-header">
+            <div class="step-num x">01</div>
+            <div>
+              <div class="step-title">Install Codex CLI</div>
+              <div class="step-subtitle">OpenAI's coding agent</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — Window 2</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">@openai/codex</span></pre>
+            </div>
+            <div class="box warn"><span class="box-icon">📂</span><span><strong>Codex must run inside a Git repository</strong> — it refuses to start in an empty folder. If you just want to test it, create one: <code class="inline">mkdir test &amp;&amp; cd test &amp;&amp; git init</code></span></div>
+          </div>
+        </div>
+
+        <div class="step-card codex-card">
+          <div class="step-header">
+            <div class="step-num x">02</div>
+            <div>
+              <div class="step-title">Create the config file</div>
+              <div class="step-subtitle">Modern Codex reads config.toml only</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="box critical"><span class="box-icon">🚨</span><span><strong>Codex v0.137+ only reads <code class="inline">~/.codex/config.toml</code>.</strong> The old <code class="inline">config.yaml</code> from the legacy npm CLI is <strong>silently ignored</strong> — this is why some guides fail with no error message.</span></div>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — create the file</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">mkdir</span> <span class="flag">-Force</span> <span class="val">$env:USERPROFILE\.codex</span>
+<span class="prompt">PS &gt; </span><span class="cmd">notepad</span> <span class="val">$env:USERPROFILE\.codex\config.toml</span></pre>
+            </div>
+            <p class="step-desc">Paste this and save:</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">~/.codex/config.toml</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="k">model_provider</span> = <span class="str">"omniroute"</span>
+
+<span class="k">[model_providers.omniroute]</span>
+<span class="k">name</span>                 = <span class="str">"OmniRoute"</span>
+<span class="k">base_url</span>             = <span class="str">"http://localhost:20128/v1"</span>
+<span class="k">env_key</span>              = <span class="str">"OMNIROUTE_API_KEY"</span>
+<span class="k">requires_openai_auth</span> = <span class="warn">false</span></pre>
+            </div>
+            <div class="box info"><span class="box-icon">🔐</span><span>Note <code class="inline">env_key</code> — Codex reads the key from an <strong>environment variable</strong>, never from the file itself. Set it in step 03.</span></div>
+          </div>
+        </div>
+
+        <div class="step-card codex-card">
+          <div class="step-header">
+            <div class="step-num x">03</div>
+            <div>
+              <div class="step-title">Set the API key &amp; test</div>
+              <div class="step-subtitle">Make it permanent, then verify</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <p class="step-desc">Set it permanently for your user account:</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre>[<span class="val">System.Environment</span>]::<span class="cmd">SetEnvironmentVariable</span>(
+  <span class="str">"OMNIROUTE_API_KEY"</span>,
+  <span class="str">"sk-your-key-here"</span>,
+  <span class="str">"User"</span>)</pre>
+            </div>
+            <p class="step-desc">For this terminal session only (do this too, so you can test right now):</p>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="k">$env:OMNIROUTE_API_KEY</span> = <span class="str">"sk-your-key-here"</span></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">PowerShell — test</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">PS &gt; </span><span class="cmd">codex</span> <span class="str">"what is 2+2?"</span></pre>
+            </div>
+            <div class="box tip"><span class="box-icon">✅</span><span>It answered — and you never signed in to OpenAI, never paid a cent. The model answering you might not even be an OpenAI one.</span></div>
+            <div class="success-banner cx">
+              <div class="emoji">🎉</div>
+              <h3>Codex CLI → OmniRoute → free providers</h3>
+              <p>OpenAI's coding agent, running on free models through your local gateway, with automatic fallback.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="codex-panel-mac">
+      <div class="steps">
+        <div class="step-card codex-card">
+          <div class="step-header">
+            <div class="step-num x">01</div>
+            <div>
+              <div class="step-title">Install Codex CLI</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal — Tab 2</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">@openai/codex</span></pre>
+            </div>
+            <div class="box warn"><span class="box-icon">📂</span><span><strong>Codex must run inside a Git repository.</strong> For a quick test: <code class="inline">mkdir test &amp;&amp; cd test &amp;&amp; git init</code></span></div>
+          </div>
+        </div>
+
+        <div class="step-card codex-card">
+          <div class="step-header">
+            <div class="step-num x">02</div>
+            <div>
+              <div class="step-title">Create config.toml</div>
+              <div class="step-subtitle">Not config.yaml — that file is ignored</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="box critical"><span class="box-icon">🚨</span><span>Codex v0.137+ reads <strong>only</strong> <code class="inline">~/.codex/config.toml</code>. The legacy <code class="inline">config.yaml</code> is silently ignored.</span></div>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">mkdir</span> <span class="flag">-p</span> <span class="val">~/.codex</span>
+<span class="prompt">$ </span><span class="cmd">nano</span> <span class="val">~/.codex/config.toml</span></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">~/.codex/config.toml</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="k">model_provider</span> = <span class="str">"omniroute"</span>
+
+<span class="k">[model_providers.omniroute]</span>
+<span class="k">name</span>                 = <span class="str">"OmniRoute"</span>
+<span class="k">base_url</span>             = <span class="str">"http://localhost:20128/v1"</span>
+<span class="k">env_key</span>              = <span class="str">"OMNIROUTE_API_KEY"</span>
+<span class="k">requires_openai_auth</span> = <span class="warn">false</span></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card codex-card">
+          <div class="step-header">
+            <div class="step-num x">03</div>
+            <div>
+              <div class="step-title">Set the API key &amp; test</div>
+            </div>
+          </div>
+          <div class="step-body">
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">~/.zshrc — permanent</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">nano</span> <span class="val">~/.zshrc</span>
+<span class="comment"># add this line at the bottom:</span>
+<span class="cmd">export</span> <span class="k">OMNIROUTE_API_KEY</span>=<span class="str">"sk-your-key-here"</span>
+<span class="comment"># save Ctrl+O Enter Ctrl+X, then:</span>
+<span class="prompt">$ </span><span class="cmd">source</span> <span class="val">~/.zshrc</span></pre>
+            </div>
+            <div class="code-block">
+              <div class="code-topbar"><span class="code-lang">Terminal — test</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+              <pre><span class="prompt">$ </span><span class="cmd">codex</span> <span class="str">"what is 2+2?"</span></pre>
+            </div>
+            <div class="success-banner cx">
+              <div class="emoji">🎉</div>
+              <h3>Codex CLI → OmniRoute → free providers</h3>
+              <p>OpenAI's coding agent on free models. No OpenAI account needed.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PART 5 ═══════════ -->
+  <div class="part-head">
+    <div class="part-num">5</div>
+    <div>
+      <div class="part-title">Fix common problems</div>
+      <div class="part-sub">Every one of these comes up — here's the fix</div>
+    </div>
+  </div>
+
+  <div class="fix-grid">
+    <div class="fix">
+      <div class="fix-sym">"context window below the minimum 64,000"</div>
+      <div class="fix-cause"><strong>Hermes only.</strong> Your Context field is set too low — usually left at the 16000 default.</div>
+      <div class="fix-go">→ Set Context to <code class="inline">131072</code> in Settings → Providers → Custom Endpoints.</div>
+    </div>
+
+    <div class="fix">
+      <div class="fix-sym">Codex ignores every setting you change</div>
+      <div class="fix-cause">You edited <code class="inline">config.yaml</code>. Codex v0.137+ only reads <code class="inline">config.toml</code> — and it fails silently.</div>
+      <div class="fix-go">→ Rename it: <code class="inline">~/.codex/config.toml</code></div>
+    </div>
+
+    <div class="fix">
+      <div class="fix-sym">Claude Code: 404 / "invalid base URL"</div>
+      <div class="fix-cause">You added <code class="inline">/v1</code> to <code class="inline">ANTHROPIC_BASE_URL</code>. Claude Code uses the gateway <strong>root</strong>, not the OpenAI-style path.</div>
+      <div class="fix-go">→ It must be exactly <code class="inline">http://localhost:20128</code> — no trailing slash, no <code class="inline">/v1</code>.</div>
+    </div>
+
+    <div class="fix">
+      <div class="fix-sym">"Connection refused" / nothing responds</div>
+      <div class="fix-cause">OmniRoute isn't running. The window you started it in was closed, or the machine rebooted.</div>
+      <div class="fix-go">→ Re-run <code class="inline">omniroute</code> in PowerShell and leave that window open.</div>
+    </div>
+
+    <div class="fix">
+      <div class="fix-sym">Everything works but responses are slow</div>
+      <div class="fix-cause">Free providers have low rate limits, and OmniRoute is retrying a provider that just gave up.</div>
+      <div class="fix-go">→ Connect 2–3 more free providers in the dashboard. More providers = faster failover.</div>
+    </div>
+
+    <div class="fix">
+      <div class="fix-sym">npm install fails on version</div>
+      <div class="fix-cause">Node.js is too old. OmniRoute needs <strong>22.22.2+</strong> or <strong>24.x</strong>.</div>
+      <div class="fix-go">→ Check with <code class="inline">node --version</code>, upgrade if needed.</div>
+    </div>
+
+    <div class="fix">
+      <div class="fix-sym">"npm warn ERESOLVE"</div>
+      <div class="fix-cause">Nothing. This is a peer-dependency notice, not an error.</div>
+      <div class="fix-go">→ Ignore it. The install completed successfully.</div>
+    </div>
+  </div>
+
+  <!-- ═══════════ PART 6 ═══════════ -->
+  <div class="part-head">
+    <div class="part-num">6</div>
+    <div>
+      <div class="part-title">9Router — the alternative</div>
+      <div class="part-sub">OmniRoute's parent project. Smaller, leaner, and worth having as a backup</div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-body" style="padding-left:20px;">
+      <p class="step-desc">OmniRoute began life as a fork of <strong>9Router</strong> — both are free, MIT-licensed, and run entirely on your own machine. They're similar enough that 9Router is a genuine drop-in alternative if you'd rather use it, and different enough that having both gives you router-level redundancy.</p>
+
+      <table>
+        <tr><th>Aspect</th><th>9Router</th><th>OmniRoute</th></tr>
+        <tr><td class="mono">Install</td><td><code class="inline">npm i -g 9router</code></td><td><code class="inline">npm i -g omniroute</code></td></tr>
+        <tr><td class="mono">Providers</td><td>40+</td><td>350+</td></tr>
+        <tr><td class="mono">Port</td><td>20128</td><td>20128</td></tr>
+        <tr><td class="mono">Token saving</td><td>RTK — 20–40%</td><td>12 compression engines — 15–95%</td></tr>
+        <tr><td class="mono">Quotas</td><td>Dashboard + reset countdowns</td><td>Dashboard + analytics</td></tr>
+        <tr><td class="mono">Best for</td><td>Maximum squeeze on your existing subscriptions</td><td>Widest provider choice, fastest setup</td></tr>
+      </table>
+
+      <div class="box critical"><span class="box-icon">⚠️</span><span><strong>They both use port 20128 — they cannot run at the same time.</strong> To switch, close the OmniRoute window first, then start 9Router. To run both, change one of the <code class="inline">PORT</code> values and point your agent at that port instead.</span></div>
+
+      <p class="step-desc">To try 9Router instead, the setup is nearly identical:</p>
+      <div class="code-block">
+        <div class="code-topbar"><span class="code-lang">Install &amp; run</span><button class="copy-btn" onclick="copyCode(this)">📋 Copy</button></div>
+        <pre><span class="cmd">npm</span> <span class="flag">install</span> <span class="flag">-g</span> <span class="val">9router</span>
+<span class="cmd">9router</span>
+<span class="comment"># dashboard: http://localhost:20128</span></pre>
+      </div>
+      <p class="step-desc">Everything in Parts 3–5 stays the same. Only the package name changes.</p>
+      <div class="box tip"><span class="box-icon">💡</span><span><strong>My suggestion:</strong> install OmniRoute as your daily driver. Keep 9Router installed as a backup — if OmniRoute ever breaks on an update, you're one command away from working again.</span></div>
+    </div>
+  </div>
+
+  <!-- ═══════════ CTA ═══════════ -->
+  <div class="cta-card">
+    <h3>Want the full video walkthrough?</h3>
+    <p>This guide is the written version. On my channel I walk through the same setup on screen — every click, every error, every fix — plus the parts that don't fit in a text page: which free providers actually hold up under real work, how to build custom routing combos, and how to set up all three agents side by side.</p>
+    <a class="cta-btn" href="#" onclick="return false;">🔔 Subscribe for the full tutorial</a>
+    <p class="cta-note">New setup video every week · no paid tools required · everything runs on your own machine</p>
+  </div>
+
+</div>
+
+<footer>
+  Built for beginners · everything runs locally on your own computer ·
+  OmniRoute &amp; 9Router are MIT licensed ·
+  <a href="https://github.com/diegosouzapw/OmniRoute">OmniRoute on GitHub</a> ·
+  <a href="https://github.com/decolua/9router">9Router on GitHub</a>
+</footer>
+
+<script>
+  function switchTool(tool) {
+    document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tool-panel-' + tool).classList.add('active');
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active-hermes','active-claude','active-codex'));
+    document.querySelector('.tool-btn[onclick*="' + tool + '"]').classList.add('active-' + tool);
+  }
+
+  function switchPart(part, os) {
+    document.getElementById(part + '-panel-win').classList.remove('active');
+    document.getElementById(part + '-panel-mac').classList.remove('active');
+    document.getElementById(part + '-panel-' + os).classList.add('active');
+
+    // tabs live in their own container, so scope by its id instead of DOM position
+    const tabs = document.querySelectorAll('#tabs-' + part + ' .os-tab');
+    tabs.forEach(t => t.classList.remove('active', 'win', 'mac'));
+    const idx = os === 'win' ? 0 : 1;
+    if (tabs[idx]) tabs[idx].classList.add('active', os);
+  }
+
+  function toggleTheme() {
+    const html = document.documentElement;
+    const btn = document.getElementById('themeBtn');
+    if (html.getAttribute('data-theme') === 'dark') {
+      html.setAttribute('data-theme', 'light');
+      btn.textContent = '🌙 Dark';
+    } else {
+      html.setAttribute('data-theme', 'dark');
+      btn.textContent = '☀️ Light';
+    }
+  }
+
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const raw = pre.innerText
+      .replace(/^PS > /gm, '')
+      .replace(/^\$ /gm, '')
+      .trim();
+    navigator.clipboard.writeText(raw).then(() => {
+      btn.textContent = '✅ Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '📋 Copy'; btn.classList.remove('copied'); }, 2000);
+    }).catch(() => {
+      btn.textContent = '❌ Copy failed';
+      setTimeout(() => { btn.textContent = '📋 Copy'; }, 2000);
+    });
+  }
+</script>
+</body>
+</html>
